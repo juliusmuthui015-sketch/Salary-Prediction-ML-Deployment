@@ -1,20 +1,23 @@
 from flask import Flask, request, jsonify
 import pickle
+import pandas as pd
+
 
 app = Flask(__name__)
+#load model
+with open('model.pkl','rb') as f:
+    model=pickle.load
 
-model = pickle.load(open("model.pkl","rb"))
-
-@app.route("/predict")
-def home():
-    return "Salary Prediction API"
+#@app.route("/")
+#def home():
+   # return "Salary Prediction API"
 
 @app.route("/predict", methods=["POST"])
 def predict():
-    data = request.json
-    exp = data["experience"]
-    prediction = model.predict([[exp]])
+    data = request.get_json()
+    experience = data["experience"]
+    prediction = model.predict([[experience]])
     return jsonify({"predicted_salary": prediction[0]})
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(port=5000,debug=True)
